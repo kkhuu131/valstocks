@@ -1,18 +1,6 @@
 "use client"
 
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-  } from "@/components/ui/table";
-  import { supabase } from "@/lib/supabase";
-  import { useEffect, useState } from "react";
 import { Avatar } from "./ui/avatar";
-import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import OwnedStocksTable from "./owned-stocks-table";
 

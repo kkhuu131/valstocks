@@ -1,12 +1,5 @@
 "use client"
 
-import StockDisplaySet from "@/components/stock-display-set";
-import { Button } from "@/components/ui/button"
-import NavBar from "@/components/ui/nav-bar";
-import { StockGraph } from "@/components/ui/stock-graph";
-import Link from "next/link";
-import { useRouter } from 'next/navigation';
-import TradePanel from "@/components/ui/trade-panel";
 import ProfileDisplay from "@/components/profile-display";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -39,7 +32,7 @@ export default function Stocks({ params }: ProfilePageProps) {
         };
 
         fetchProfile();
-    }, []);
+    }, [username]);
 
     return (
         <main className="mt-20 mb-20">

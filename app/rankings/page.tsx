@@ -1,9 +1,4 @@
 import RankingsTable from "@/components/rankings-table";
-import StockDisplaySet from "@/components/stock-display-set";
-import { Button } from "@/components/ui/button"
-import NavBar from "@/components/ui/nav-bar";
-import { StockGraph } from "@/components/ui/stock-graph";
-import Link from "next/link";
 
 export default function Rankings() {
 

@@ -2,14 +2,10 @@
 
 import ProfileDisplay from "@/components/profile-display";
 import StockDisplaySet from "@/components/stock-display-set";
-import { Button } from "@/components/ui/button"
-import NavBar from "@/components/ui/nav-bar";
-import { StockGraph } from "@/components/ui/stock-graph";
 import { useUser } from "@/context/UserContext";
-import Link from "next/link";
 
 export default function Home() {
-  const { user, loading } = useUser();
+  const { user } = useUser();
 
   return (
     <main className="pt-20">

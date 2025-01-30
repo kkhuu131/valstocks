@@ -4,13 +4,17 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '../lib/supabase';
 import { NavUser } from '@/components/ui/nav-user';
+import { Session } from '@supabase/supabase-js';
 
 const AuthButton = () => {
-    const [session, setSession] = useState<any>(null);
+    const [session, setSession] = useState<Session | null>(null);
 
     useEffect(() => {
-        const session = supabase.auth.getSession();
-        setSession(session);
+        const getSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            setSession(session);
+        };
+        getSession();
 
         const {
             data: { subscription }
@@ -23,17 +27,17 @@ const AuthButton = () => {
         };
     }, []);
 
-    const getURL = () => {
-        let url =
-          process.env.NEXT_PUBLIC_SITE_URL ??
-          process.env.NEXT_PUBLIC_VERCEL_URL ??
-          'http://localhost:3000';
-        // Make sure to include `https://` when not localhost.
-        url = url.includes('http') ? url : `https://${url}`;
-        // Make sure to include a trailing `/`.
-        url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
-        return url;
-    };
+    // const getURL = () => {
+    //     let url =
+    //       process.env.NEXT_PUBLIC_SITE_URL ??
+    //       process.env.NEXT_PUBLIC_VERCEL_URL ??
+    //       'http://localhost:3000';
+    //     // Make sure to include `https://` when not localhost.
+    //     url = url.includes('http') ? url : `https://${url}`;
+    //     // Make sure to include a trailing `/`.
+    //     url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
+    //     return url;
+    // };
 
     const handleAuth = async () => {
         await supabase.auth.signInWithOAuth({

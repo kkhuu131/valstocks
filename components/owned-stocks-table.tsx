@@ -9,13 +9,11 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table";
-  import { supabase } from "@/lib/supabase";
-  import { useEffect, useState } from "react";
 import { useStocksContext } from "@/context/StocksContext";
 import { SkeletonCard } from "./ui/skeleton-card";
 
   export default function OwnedStocksTable({ stocks: ownedStocks }: { stocks: Map<string, number> }) {
-    const { stocks, loading, error } = useStocksContext();
+    const { stocks, loading } = useStocksContext();
 
     if(loading) {
         return <SkeletonCard/>;
