@@ -15,7 +15,7 @@ export default function Home() {
               The original repo can be found at <Link href="https://github.com/kkhuu131/val-stocks" className="text-blue-500 underline">https://github.com/kkhuu131/val-stocks</Link>
             </p>
             <p className="text-xl text-muted-foreground mt-5">Please don&apos;t take anything too seriously, and have fun!</p>
-            <Image src="https://www.dexerto.com/cdn-image/wp-content/uploads/2023/09/20/52990983068_fb6ef595f3_k_1600x900.jpg" alt="fns" className="w-1/2 mt-5"/>
+            <Image src="/fns.jpg" alt="fns" className="w-1/2 mt-5"/>
       </section>
     </main>
   );
