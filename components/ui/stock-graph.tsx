@@ -106,7 +106,7 @@ export function StockGraph({ symbol }: StockGraphProps) {
               dataKey="price"
               stroke={getBorderColor(chartData)}
             />
-            <ChartTooltip content={<ChartTooltipContent />} />
+            <ChartTooltip content={<ChartTooltipContent labelFormatter={(label) => new Date(label).toLocaleTimeString()} />} />
           </LineChart>
         </ChartContainer>
       </CardContent>

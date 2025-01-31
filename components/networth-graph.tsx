@@ -124,7 +124,7 @@ export function NetworthGraph({ userId }: NetworthGraphProps) {
                         dataKey="networth"
                         stroke={getBorderColor()}
                     />
-                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartTooltip content={<ChartTooltipContent labelFormatter={(label) => new Date(label).toLocaleTimeString()} />} />
                     </LineChart>
                 </ResponsiveContainer>
             </ChartContainer>
