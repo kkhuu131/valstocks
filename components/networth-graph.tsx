@@ -122,7 +122,7 @@ export function NetworthGraph({ userId }: NetworthGraphProps) {
                             domain={['auto', 'auto']}
                             tick={false}
                             axisLine={false}
-                            width={0} // Add this line to remove the gap
+                            width={0}
                         />
                         <Line
                             type="monotone"

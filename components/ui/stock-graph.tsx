@@ -104,7 +104,8 @@ export function StockGraph({ symbol }: StockGraphProps) {
               domain={['auto', 'auto']}
               tick={false}
               axisLine={false}
-              width={0}/>
+              width={0}
+            />
             <Line
               type="monotone"
               dot={false}

@@ -37,10 +37,8 @@ export default function Stocks({ params }: ProfilePageProps) {
     return (
         <main className="mt-20 mb-20">
             <section className="items-center justify-center py-2 w-full max-w-screen-lg mx-auto">
-                <div className="flex w-full">
-                    <div className="max-w-md mx-auto">
-                        <ProfileDisplay profile={profile} />
-                    </div>
+                <div className="flex w-full max-w-md mx-auto">
+                    <ProfileDisplay profile={profile} />
                 </div>
             </section>
         </main>

@@ -9,10 +9,10 @@ export default function Home() {
 
   return (
     <main className="pt-20">
-      <section className="flex flex-col items-center justify-center min-h-screen py-2 w-full max-w-screen-lg mx-auto px-4">
+      <section className="flex flex-col items-center justify-center min-h-screen py-2 mx-auto px-4">
         <h1 className="text-4xl font-bold">ValStocks</h1>
         {user && 
-          <div className="w-full m-5">
+          <div className="flex w-full max-w-md mx-auto my-5">
             <ProfileDisplay profile={user}/>
           </div>
         }
