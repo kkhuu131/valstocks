@@ -3,6 +3,7 @@
 // StocksContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchStocks, fetchCurrentStocks, fetchStockBySymbol } from '../lib/supabaseQueries';
+import { supabase } from '../lib/supabase';
 
 export type StockData = {
     symbol: string;
@@ -57,8 +58,6 @@ export const StocksProvider = ({ children }: {children: React.ReactNode}) => {
                 return acc;
             }, {} as StocksMap);
 
-            console.log(stocksMap);
-
             setStocks(stocksMap);
             setError(null);
         } catch (err) {
@@ -70,6 +69,35 @@ export const StocksProvider = ({ children }: {children: React.ReactNode}) => {
     };
 
     getStocks();
+    const channel = supabase
+        .channel("current_stock-updates")
+        .on("postgres_changes", 
+            {
+                event: "UPDATE",
+                schema: "public",
+                table: "current_stock_prices",
+                filter: 'column IN ("price", "locked")'
+            },
+            (payload) => {
+                setStocks(prevStocks => {
+                    const updatedStocks = { ...prevStocks };
+                    if (updatedStocks[payload.new.symbol]) {       
+                        updatedStocks[payload.new.symbol] = {
+                            ...updatedStocks[payload.new.symbol],
+                            price: payload.new.price,
+                            locked: payload.new.locked,
+                        };
+                    }
+                    return updatedStocks;
+                });
+            }
+        )
+        .subscribe();
+
+    return () => {
+        supabase.removeChannel(channel);
+    };
+
   }, []);
 
   return (

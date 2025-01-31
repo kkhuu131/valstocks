@@ -118,8 +118,8 @@ export default function StockDisplaySet() {
     return (
         <div className="flex flex-col gap-6 p-4">
             {Object.values(stocks).map((stock) =>
-                <Link href={"/stocks/" + stock.symbol}>
-                    <div key={stock.symbol}  className="w-full h-auto overflow-hidden transition-transform duration-300 ease-in-out hover:scale-105 group">
+                <Link href={"/stocks/" + stock.symbol} key={stock.symbol}>
+                    <div className="w-full h-auto overflow-hidden transition-transform duration-300 ease-in-out hover:scale-105 group">
                         <Card className="flex flex-row items-center p-6 gap-6">
                             <div className="w-1/5 flex flex-col items-start">
                                 <div className="flex items-center gap-2">

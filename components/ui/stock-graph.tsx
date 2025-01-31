@@ -2,7 +2,7 @@
 
 import { TrendingUp } from "lucide-react"
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis } from "recharts"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -42,25 +42,29 @@ export function StockGraph({ symbol }: StockGraphProps) {
   const { stocks } = useStocksContext();
   const chartData = stocks[symbol]?.data || [];
 
-  const [hoveredPrice, setHoveredPrice] = useState(chartData[chartData.length - 1]?.price || 0);
+  const [hoveredPrice, setHoveredPrice] = useState(stocks[symbol]?.price || 0);
+
+  useEffect(() => {
+    setHoveredPrice(stocks[symbol]?.price || 0);
+  }, [stocks[symbol]?.price]);
 
   const handleMouseMove = (e: any) => {
     if (e.isTooltipActive && e.activePayload && e.activePayload.length) {
       const hoveredData = e.activePayload[0].payload;
       setHoveredPrice(hoveredData.price);
     } else {
-      setHoveredPrice(chartData[chartData.length - 1]?.price || 0);
+      setHoveredPrice(stocks[symbol]?.price || 0);
     }
   };
 
   const handleMouseLeave = () => {
-    setHoveredPrice(chartData[chartData.length - 1]?.price || 0);
+    setHoveredPrice(stocks[symbol]?.price || 0);
   };
 
   const getBorderColor = (data: any) => {
     if (data.length === 0) return 'gray';
     const leftmostPrice = data[0].price;
-    const rightmostPrice = hoveredPrice || data[data.length - 1].price;
+    const rightmostPrice = hoveredPrice || stocks[symbol]?.price;
 
     return getPriceColor(rightmostPrice - leftmostPrice);
   };
@@ -82,12 +86,12 @@ export function StockGraph({ symbol }: StockGraphProps) {
           <h1 className="text-4xl font-bold mb-2">{teamMappings.teamBySymbolMap[symbol as keyof typeof teamMappings.teamBySymbolMap]?.name}</h1>
           <div className="flex items-center">
             <p className="text-3xl">$</p>
-            <AnimatingNumber value={hoveredPrice || (chartData.length > 0 ? chartData[chartData.length - 1].price : 0)} />
+            <AnimatingNumber value={hoveredPrice || stocks[symbol]?.price || 0} />
           </div>
           <div className="h-2" />
           <StockPriceChange
             firstPrice={chartData[0]?.price || 0}
-            secondPrice={hoveredPrice || (chartData.length > 0 ? chartData[chartData.length - 1].price : 0)}
+            secondPrice={hoveredPrice || stocks[symbol]?.price || 0}
           />
         </CardTitle>
       </CardHeader>
