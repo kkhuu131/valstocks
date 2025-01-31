@@ -1,7 +1,7 @@
 "use client"
 
 import { TrendingUp } from "lucide-react"
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis } from "recharts"
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import React, { useEffect, useState } from "react";
 import {
   Card,
@@ -100,6 +100,11 @@ export function StockGraph({ symbol }: StockGraphProps) {
           <LineChart data={chartData} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="timestamp" tickFormatter={(value) => new Date(value).toLocaleTimeString()} />
+            <YAxis 
+              domain={['auto', 'auto']}
+              tick={false}
+              axisLine={false}
+              width={0}/>
             <Line
               type="monotone"
               dot={false}

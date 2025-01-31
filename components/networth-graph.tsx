@@ -1,7 +1,7 @@
 "use client"
 
 import { TrendingUp } from "lucide-react"
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis } from "recharts"
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import React, { useEffect, useState } from "react";
 import {
   Card,
@@ -113,18 +113,24 @@ export function NetworthGraph({ userId }: NetworthGraphProps) {
             <ChartContainer config={chartConfig}>
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                        dataKey="timestamp"
-                        tickFormatter={(value) => new Date(value).toLocaleTimeString()}
-                    />
-                    <Line
-                        type="monotone"
-                        dot={false}
-                        dataKey="networth"
-                        stroke={getBorderColor()}
-                    />
-                    <ChartTooltip content={<ChartTooltipContent labelFormatter={(label) => new Date(label).toLocaleTimeString()} />} />
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                            dataKey="timestamp"
+                            tickFormatter={(value) => new Date(value).toLocaleTimeString()}
+                        />
+                        <YAxis
+                            domain={['auto', 'auto']}
+                            tick={false}
+                            axisLine={false}
+                            width={0} // Add this line to remove the gap
+                        />
+                        <Line
+                            type="monotone"
+                            dot={false}
+                            dataKey="networth"
+                            stroke={getBorderColor()}
+                        />
+                        <ChartTooltip content={<ChartTooltipContent labelFormatter={(label) => new Date(label).toLocaleTimeString()} />} />
                     </LineChart>
                 </ResponsiveContainer>
             </ChartContainer>
