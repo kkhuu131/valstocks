@@ -8,7 +8,7 @@ export default function Home() {
   const { user } = useUser();
 
   return (
-    <main className="pt-20">
+    <main className="py-20">
       <section className="flex flex-col items-center justify-center min-h-screen py-2 mx-auto px-4">
         <h1 className="text-4xl font-bold">ValStocks</h1>
         {user && 

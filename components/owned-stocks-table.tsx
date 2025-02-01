@@ -23,7 +23,7 @@ import { SkeletonCard } from "./ui/skeleton-card";
         <Table>
             <TableCaption></TableCaption>
             <TableHeader>
-                <TableRow>
+                <TableRow className="hover:bg-transparent">
                 <TableHead className="w-[100px]">Team</TableHead>
                 <TableHead className="text-right">Owned</TableHead>
                 <TableHead className="text-right">Price</TableHead>
@@ -34,7 +34,7 @@ import { SkeletonCard } from "./ui/skeleton-card";
         {       Object.entries(ownedStocks)
                         .sort(([, amountA], [, amountB]) => amountB - amountA)
                         .map(([symbol, amount]) => (
-                    <TableRow key={symbol} onClick={() => window.location.href = `/stocks/${symbol}`}>
+                    <TableRow key={symbol} onClick={() => window.location.href = `/stocks/${symbol}`} className="cursor-pointer">
                             <TableCell className="w-[100px]">
                                 {symbol}
                             </TableCell>

@@ -43,7 +43,7 @@ export const StocksProvider = ({ children }: {children: React.ReactNode}) => {
             const stocksWithData: Stock[] = await Promise.all(
                 (data as Stock[]).map(async (stock) => {
                 try {
-                    const additionalData = await fetchStockBySymbol(stock.symbol); // Fetch additional data
+                    const additionalData = await fetchStockBySymbol(stock.symbol);
                     return { ...stock, data: additionalData };
                 } catch (err) {
                     console.error(`Failed to fetch data for symbol: ${stock.symbol}`, err);

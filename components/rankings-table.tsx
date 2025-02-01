@@ -39,7 +39,7 @@ import Link from "next/link";
         <Table>
             <TableCaption></TableCaption>
             <TableHeader>
-                <TableRow>
+                <TableRow className="hover:bg-transparent">
                 <TableHead className="w-[100px]">Rank</TableHead>
                 <TableHead>Username</TableHead>
                 <TableHead>Networth</TableHead>
@@ -48,7 +48,7 @@ import Link from "next/link";
             </TableHeader>
             <TableBody>
                 {profiles.map((profile, index) => (
-                    <TableRow key={profile.id} onClick={() => window.location.href = `/profiles/${profile.username}`}>
+                    <TableRow key={profile.id} onClick={() => window.location.href = `/profiles/${profile.username}`} className="cursor-pointer">
                             <TableCell className="w-[100px]">{index + 1}
                             </TableCell>
                             <TableCell className="flex items-center">

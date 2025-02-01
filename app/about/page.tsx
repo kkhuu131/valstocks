@@ -12,7 +12,7 @@ export default function Home() {
             You can buy and sell stocks to earn money or to root for your favorite teams, and compete against other players. Currently, you have to be logged in using Discord OAuth to trade stocks.</p>
             <p className="text-xl text-muted-foreground mt-5">This is originally made for a fun side project so I could learn more about full-stack development. The project has been restarted multiple times and been worked on and off for a while so I probably won&apos;t work on it for too much longer. However, feel free to leave any comments or suggestions.</p>
             <p className="text-xl text-muted-foreground mt-5">
-              The original repo can be found at <Link href="https://github.com/kkhuu131/val-stocks" className="text-blue-500 underline">https://github.com/kkhuu131/val-stocks</Link>
+              The original repo can be found <Link href="https://github.com/kkhuu131/valstocks" target="_blank" className="text-blue-500 underline">here.</Link>
             </p>
             <p className="text-xl text-muted-foreground mt-5">Please don&apos;t take anything too seriously, and have fun!</p>
             <img src="/fns.jpg" alt="fns" className="w-1/2 mt-5"/>
