@@ -10,7 +10,7 @@ interface ProfilePageProps {
     };
 }
 
-export default function Stocks({ params }: ProfilePageProps) {
+export default function Profile({ params }: ProfilePageProps) {
     const { username } = params;
     const [profile, setProfile] = useState<any>(null);
 
@@ -32,6 +32,26 @@ export default function Stocks({ params }: ProfilePageProps) {
         };
 
         fetchProfile();
+
+        const profileSubscription = supabase
+            .channel("profile-updates")
+            .on("postgres_changes", 
+            {
+                event: "UPDATE",
+                schema: "public",
+                table: "profiles",
+                filter: `username=eq.${username}`
+            },
+            (payload) => {
+                setProfile(payload.new);
+            }
+            )
+            .subscribe();
+
+
+        return () => {
+            supabase.removeChannel(profileSubscription);
+        };
     }, [username]);
 
     return (

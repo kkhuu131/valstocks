@@ -195,27 +195,36 @@ export default function TradePanel({ symbol }: TradePanelProps) {
                         </CardContent>
                         <CardFooter>
                             {user ? (
-                                <AlertDialog>
-                                    <AlertDialogTrigger className="w-full p-2 bg-green text-white rounded-md">
-                                        Buy
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                        <AlertDialogTitle>Buying {symbol}</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            You are buying {shares} shares of {symbol} for ${estimatedValue.toFixed(2)}. This action cannot be undone. Are you sure?
-                                        </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction className="bg-green text-white rounded-md"><button
-                                            onClick={handleBuyConfirmation}
-                                        >
+                                stocks[symbol]?.locked ? (
+                                    <button
+                                        disabled
+                                        className="w-full p-2 bg-gray-400 text-white rounded-md"
+                                    >
+                                        {symbol} is currently locked, cannot buy
+                                    </button>
+                                ) : (
+                                    <AlertDialog>
+                                        <AlertDialogTrigger className="w-full p-2 bg-green text-white rounded-md">
                                             Buy
-                                        </button></AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Buying {symbol}</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    You are buying {shares} shares of {symbol} for ${estimatedValue.toFixed(2)}. This action cannot be undone. Are you sure?
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction className="bg-green text-white rounded-md">
+                                                    <button onClick={handleBuyConfirmation}>
+                                                        Buy
+                                                    </button>
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                )
                             ) : (
                                 <button
                                     onClick={() => handleAuth()}
@@ -272,27 +281,36 @@ export default function TradePanel({ symbol }: TradePanelProps) {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <AlertDialog>
-                                <AlertDialogTrigger className="w-full p-2 bg-green text-white rounded-md">
-                                    Sell
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                    <AlertDialogTitle>Selling {symbol}</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        You are selling {shares} shares of {symbol} for ${estimatedValue.toFixed(2)}. This action cannot be undone. Are you sure?
-                                    </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction className="bg-green text-white rounded-md"><button
-                                        onClick={handleSellConfirmation}
-                                    >
+                            {stocks[symbol]?.locked ? (
+                                <button
+                                    disabled
+                                    className="w-full p-2 bg-gray-400 text-white rounded-md"
+                                >
+                                    {symbol} is currently locked, cannot sell
+                                </button>
+                            ) : (
+                                <AlertDialog>
+                                    <AlertDialogTrigger className="w-full p-2 bg-green text-white rounded-md">
                                         Sell
-                                    </button></AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Selling {symbol}</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                You are selling {shares} shares of {symbol} for ${estimatedValue.toFixed(2)}. This action cannot be undone. Are you sure?
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction className="bg-green text-white rounded-md">
+                                                <button onClick={handleSellConfirmation}>
+                                                    Sell
+                                                </button>
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            )}
                         </CardFooter>
                 </TabsContent>
             </Tabs>

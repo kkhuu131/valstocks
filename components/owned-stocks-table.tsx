@@ -11,6 +11,7 @@ import {
   } from "@/components/ui/table";
 import { useStocksContext } from "@/context/StocksContext";
 import { SkeletonCard } from "./ui/skeleton-card";
+import StockPriceChange from "./ui/stock-price-change";
 
   export default function OwnedStocksTable({ stocks: ownedStocks }: { stocks: Map<string, number> }) {
     const { stocks, loading } = useStocksContext();
@@ -27,7 +28,8 @@ import { SkeletonCard } from "./ui/skeleton-card";
                 <TableHead className="w-[100px]">Team</TableHead>
                 <TableHead className="text-right">Owned</TableHead>
                 <TableHead className="text-right">Price</TableHead>
-                <TableHead className="text-right">Total Value</TableHead>
+                {/* <TableHead className="text-right">Total Value</TableHead> */}
+                <TableHead className="text-right">Last 24 Hours</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -44,8 +46,16 @@ import { SkeletonCard } from "./ui/skeleton-card";
                             <TableCell className="text-right">
                                 ${(stocks[symbol]?.price || 0).toFixed(2)}
                             </TableCell>
-                            <TableCell className="text-right">
+                            {/* <TableCell className="text-right">
                                 ${(amount * stocks[symbol]?.price || 0).toFixed(2)}
+                            </TableCell> */}
+                            <TableCell className="text-right">
+                                <div className="text-sm">
+                                    <StockPriceChange 
+                                        firstPrice={stocks[symbol]?.data?.[0]?.price || 0} 
+                                        secondPrice={stocks[symbol]?.data?.[stocks[symbol].data.length - 1]?.price || 0} 
+                                    />
+                                </div>
                             </TableCell>
                     </TableRow>
                 ))}
