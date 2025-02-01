@@ -53,7 +53,7 @@ export function NetworthGraph({ userId }: NetworthGraphProps) {
                 .from("networth_history")
                 .select("timestamp, networth")
                 .eq("user_id", userId)
-                .eq("interval_type", "minute")
+                .eq("interval_type", "hourly") // minute (last hour), hourly (last day), daily (last week)
                 .order("timestamp", { ascending: true });
 
             if (error) {

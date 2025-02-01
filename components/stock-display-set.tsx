@@ -70,8 +70,8 @@ export default function StockDisplaySet() {
     };
 
     const getBorderColor = (data: any) => {
-        const leftmostPrice = data[0].price;
-        const rightmostPrice = data[data.length - 1].price;
+        const leftmostPrice = data[0]?.price || 0;
+        const rightmostPrice = data[data.length - 1]?.price || 0;
     
         return getPriceColor(rightmostPrice - leftmostPrice);
     };

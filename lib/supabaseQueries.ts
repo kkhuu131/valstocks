@@ -6,8 +6,8 @@ export const fetchStocks = async () => {
     return data;
 };
 
-export const fetchStockBySymbol = async (symbol: string) => {
-    const { data, error } = await supabase.from('stock_prices').select('*').eq('symbol', symbol).eq('interval_type', 'minute').order('timestamp', {ascending: true});
+export const fetchStockBySymbol = async (symbol: string, interval_type: string = '5-minute') => {
+    const { data, error } = await supabase.from('stock_prices').select('*').eq('symbol', symbol).eq('interval_type', interval_type).order('timestamp', {ascending: true});
     if (error) throw new Error(error.message);
     return data;
 };
