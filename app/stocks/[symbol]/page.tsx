@@ -15,7 +15,7 @@ interface StockPageProps {
 }
 
 export default function Stocks({ params }: StockPageProps) {
-    const { symbol } = params;
+    const symbol = decodeURIComponent(params.symbol);
 
     return (
         <main className="mt-20 mb-20">
