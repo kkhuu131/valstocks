@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import { StocksProvider } from "@/context/StocksContext";
 import NavBar from "@/components/ui/nav-bar";
 import { UserProvider } from "@/context/UserContext";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,6 +37,7 @@ export default function RootLayout({
             <UserProvider>
               <NavBar></NavBar>
               {children}
+              <Toaster />
             </UserProvider>
           </StocksProvider>
         </ThemeProvider>

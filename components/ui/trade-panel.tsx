@@ -23,6 +23,7 @@ import {
   } from "@/components/ui/alert-dialog";
   import { supabase } from "@/lib/supabase";
 import { SkeletonCard } from './skeleton-card';
+import { toast } from "sonner";
   
 
 interface TradePanelProps {
@@ -79,25 +80,26 @@ export default function TradePanel({ symbol }: TradePanelProps) {
 
         if (error) {
             console.error("Error buying stock:", error);
+            toast("There was an error buying stock.");
         } else {
-            console.log("Stock bought successfully!");
+            toast("Stock bought successfully! Changes might take several seconds to reflect.");
             setShares(0);
         }
     };
 
     const handleSellConfirmation = async () => {
         if (!user) {
-            console.log("Not logged in!");
+            toast("Not logged in!");
             return;
         }
 
         if (shares <= 0) {
-            console.log("Invalid shares amount!");
+            toast("Invalid shares amount!");
             return;
         }
 
         if (shares > (user?.stocks[symbol] || 0)) {
-            console.log("Insufficient shares!");
+            toast("Insufficient shares!");
             return;
         }
 
@@ -109,8 +111,9 @@ export default function TradePanel({ symbol }: TradePanelProps) {
 
         if (error) {
             console.error("Error selling stock:", error);
+            toast("There was an error selling stock.");
         } else {
-            console.log("Stock sold successfully!");
+            toast("Stock sold successfully! Changes might take several seconds to reflect.");
             setShares(0);
         }
     };

@@ -52,19 +52,43 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    fetchUserProfile();
+    const initialize = async () => {
+      await fetchUserProfile();
+    
+      const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!session) {
+          setUser(null);
+        } else {
+          fetchUserProfile();
+        }
+      });
 
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        setUser(null);
-      } else {
-        fetchUserProfile();
-      }
-    });
-
-    return () => {
-      subscription.subscription?.unsubscribe();
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
+    
+      const channel = supabase
+        .channel("user-profile-updates")
+        .on("postgres_changes", 
+            {
+                event: "UPDATE",
+                schema: "public",
+                table: "profiles",
+                filter: `id=eq.${session?.user?.id}`,
+            },
+            (payload) => {
+              setUser(payload.new as UserProfile);
+              console.log("Updated:", payload.new);
+            }
+        )
+        .subscribe();
+    
+      return () => {
+        subscription.subscription?.unsubscribe();
+        supabase.removeChannel(channel);
+      };
     };
+
+    initialize();
   }, []);
 
   return (

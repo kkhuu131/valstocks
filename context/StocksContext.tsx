@@ -69,6 +69,7 @@ export const StocksProvider = ({ children }: {children: React.ReactNode}) => {
     };
 
     getStocks();
+    
     const channel = supabase
         .channel("current_stock-updates")
         .on("postgres_changes", 
