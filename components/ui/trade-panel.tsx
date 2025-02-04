@@ -74,7 +74,6 @@ export default function TradePanel({ symbol }: TradePanelProps) {
 
         const { error } = await supabase.rpc('buy_stock', {
             in_symbol: symbol,
-            in_user_id: user.id,
             in_amount: shares,
         });
 
@@ -105,7 +104,6 @@ export default function TradePanel({ symbol }: TradePanelProps) {
 
         const { error } = await supabase.rpc('sell_stock', {
             in_symbol: symbol,
-            in_user_id: user.id,
             in_amount: shares,
         });
 
