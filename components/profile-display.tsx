@@ -27,7 +27,7 @@ import { NetworthGraph } from "./networth-graph";
                 <div>
                 {profile?.id && (
                     <div>
-                        <NetworthGraph userId={profile.id}/>
+                        <NetworthGraph networth={profile.networth} userId={profile.id}/>
                     </div>
                 )}
                 <p >Balance: ${profile?.balance || "0.00"}</p>

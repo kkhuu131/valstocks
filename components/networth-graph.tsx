@@ -36,10 +36,11 @@ const chartConfig = {
 } satisfies ChartConfig
 
 interface NetworthGraphProps {
+  networth: number,
   userId: string
 }
 
-export function NetworthGraph({ userId }: NetworthGraphProps) {
+export function NetworthGraph({ networth, userId }: NetworthGraphProps) {
     const [chartData, setChartData] = useState<{ timestamp: string; networth: number }[]>([]);
     const [hoveredNetWorth, setHoveredNetWorth] = useState(0);
 
@@ -47,8 +48,6 @@ export function NetworthGraph({ userId }: NetworthGraphProps) {
         if (!userId) return;
 
         const fetchNetWorthHistory = async () => {
-            console.log("userId", userId);
-
             const { data, error } = await supabase
                 .from("networth_history")
                 .select("timestamp, networth")
@@ -65,13 +64,16 @@ export function NetworthGraph({ userId }: NetworthGraphProps) {
 
             setChartData(data);
             if (data.length > 0) {
-                setHoveredNetWorth(data[data.length - 1].networth); // Set latest net worth
+                setHoveredNetWorth(networth); // Set latest net worth
             }
         };
 
         fetchNetWorthHistory();
     }, []);
 
+    useEffect(() => {
+        setHoveredNetWorth(networth);
+    }, [networth]);
     
     const handleMouseMove = (e: any) => {
         if (e.isTooltipActive && e.activePayload?.length) {
@@ -81,7 +83,7 @@ export function NetworthGraph({ userId }: NetworthGraphProps) {
 
     const handleMouseLeave = () => {
         if (chartData.length > 0) {
-            setHoveredNetWorth(chartData[chartData.length - 1].networth);
+            setHoveredNetWorth(networth);
         }
     };
 
@@ -105,7 +107,7 @@ export function NetworthGraph({ userId }: NetworthGraphProps) {
                 <div className="h-2" />
                 <StockPriceChange
                     firstPrice={chartData[0]?.networth || 0}
-                    secondPrice={hoveredNetWorth || chartData[chartData.length - 1]?.networth || 0}
+                    secondPrice={hoveredNetWorth || networth || 0}
                 />
             </CardTitle>
             </CardHeader>
