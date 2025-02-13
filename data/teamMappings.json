@@ -528,14 +528,6 @@
       "country": "Europe",
       "symbol": "KOI"
     },
-    "7055": {
-      "id": "7055",
-      "url": "https://www.vlr.gg/team/7055/team-liquid-brazil",
-      "name": "Team Liquid Brazil",
-      "img": "https://owcdn.net/img/640c381f0603f.png",
-      "country": "Brazil",
-      "symbol": "TL"
-    },
     "7332": {
       "id": "7332",
       "url": "https://www.vlr.gg/team/7332/los-grandes",
@@ -1570,6 +1562,14 @@
     }
   },
   "teamByNameMap": {
+    "Team Liquid": {
+      "id": "474",
+      "url": "https://www.vlr.gg/team/474/team-liquid",
+      "name": "Team Liquid",
+      "img": "https://owcdn.net/img/640c381f0603f.png",
+      "country": "Europe",
+      "symbol": "TL"
+    },
     "TALON": {
       "id": "8304",
       "url": "https://www.vlr.gg/team/8304/talon",
@@ -2954,14 +2954,6 @@
       "country": "Canada",
       "symbol": "SRG"
     },
-    "Team Liquid Brazil": {
-      "id": "7055",
-      "url": "https://www.vlr.gg/team/7055/team-liquid-brazil",
-      "name": "Team Liquid Brazil",
-      "img": "https://owcdn.net/img/640c381f0603f.png",
-      "country": "Brazil",
-      "symbol": "TL"
-    },
     "Akave Esports GC": {
       "id": "7412",
       "url": "https://www.vlr.gg/team/7412/akave-esports-gc",
@@ -3901,11 +3893,11 @@
       "symbol": "XIP"
     },
     "TL": {
-      "id": "7055",
-      "url": "https://www.vlr.gg/team/7055/team-liquid-brazil",
-      "name": "Team Liquid Brazil",
+      "id": "474",
+      "url": "https://www.vlr.gg/team/474/team-liquid",
+      "name": "Team Liquid",
       "img": "https://owcdn.net/img/640c381f0603f.png",
-      "country": "Brazil",
+      "country": "Europe",
       "symbol": "TL"
     },
     "KRÜ.B": {
