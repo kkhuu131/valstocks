@@ -1,38 +1,36 @@
-This is the frontend repository for ValStocks.
+# ValStocks
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+ValStocks is a stock trading simulator for the popular FPS game, VALORANT. There is no real money involved and is simply for fun. Each stock is based on a pro team's performance in the Champions League. The value of stocks also take into account general sentiment using Reddit, and supply and demand. You can buy and sell stocks to earn money or to root for your favorite teams, and compete against other players. Currently, you have to be logged in using Discord OAuth to trade stocks.
 
-## Getting Started
+## Tech Stack
 
-First, run the development server:
+Frontend:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Typescript
+- React
+- Next.js
+- Tailwind CSS
+- Shadcn UI
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Backend:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Node.js
+- Express
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Database:
 
-## Learn More
+- Supabase
+- PostgreSQL
 
-To learn more about Next.js, take a look at the following resources:
+Deployment:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Vercel
+- Render
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Features
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- User authentication (Discord OAuth)
+- Stock portfolio
+- Stock trading (buy/sell)
+- Stock and Networth history
+- User rankings
