@@ -21,7 +21,9 @@ import { useStocksContext } from "@/context/StocksContext";
 import AnimatingNumber from "./animating-number";
 import StockPriceChange from "./stock-price-change";
 import teamMappings from "@/data/teamMappings.json";
-
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { fetchStockBySymbol } from "@/lib/supabaseQueries";
+import { SkeletonCard } from "./skeleton-card";
 
 const chartConfig = {
   price: {
@@ -38,15 +40,100 @@ interface StockGraphProps {
   symbol: string
 }
 
+type Timeframe = '1H' | '1D' | '1W' | '1M' | 'ALL';
+
+interface HistoricalDataCache {
+  minute: any[];
+  fiveMinute: any[];
+  hourly: any[];
+  daily: any[];
+}
+
+const formatTimestamp = (timestamp: string, timeframe: Timeframe) => {
+  const date = new Date(timestamp);
+  
+  switch (timeframe) {
+    case '1H':
+    case '1D':
+      return date.toLocaleTimeString();
+    case '1W':
+      return `${date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+      })} ${date.toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit'
+      })}`;
+    case '1M':
+    case 'ALL':
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric'
+      });
+    default:
+      return date.toLocaleTimeString();
+  }
+};
+
 export function StockGraph({ symbol }: StockGraphProps) {
   const { stocks } = useStocksContext();
-  const chartData = stocks[symbol]?.data || [];
-
+  const [timeframe, setTimeframe] = useState<Timeframe>('1H');
+  const [historicalDataCache, setHistoricalDataCache] = useState<HistoricalDataCache>({
+    minute: [],
+    fiveMinute: [],
+    hourly: [],
+    daily: []
+  });
   const [hoveredPrice, setHoveredPrice] = useState(stocks[symbol]?.price || 0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setHoveredPrice(stocks[symbol]?.price || 0);
-  }, [stocks[symbol]?.price]);
+    const fetchAllHistoricalData = async () => {
+      setIsLoading(true);
+      try {
+        const [minuteData, fiveMinuteData, hourlyData, dailyData] = await Promise.all([
+          fetchStockBySymbol(symbol, 'minute'),
+          fetchStockBySymbol(symbol, '5-minute'),
+          fetchStockBySymbol(symbol, 'hourly'),
+          fetchStockBySymbol(symbol, 'daily')
+        ]);
+
+        setHistoricalDataCache({
+          minute: minuteData || [],
+          fiveMinute: fiveMinuteData || [],
+          hourly: hourlyData || [],
+          daily: dailyData || []
+        });
+      } catch (error) {
+        console.error('Error fetching historical data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllHistoricalData();
+  }, [symbol]);
+
+  // Get the appropriate data based on timeframe
+  const getDisplayData = () => {
+    if (timeframe === '1H') {
+      return stocks[symbol]?.data || [];
+    }
+
+    switch (timeframe) {
+      case '1D':
+        return historicalDataCache.fiveMinute;
+      case '1W':
+        return historicalDataCache.hourly;
+      case '1M':
+      case 'ALL':
+        return historicalDataCache.daily;
+      default:
+        return stocks[symbol]?.data || [];
+    }
+  };
+
+  const displayData = getDisplayData();
 
   const handleMouseMove = (e: any) => {
     if (e.isTooltipActive && e.activePayload && e.activePayload.length) {
@@ -79,6 +166,18 @@ export function StockGraph({ symbol }: StockGraphProps) {
     }
   };
 
+  if (isLoading) {
+    return (
+      <Card className="border border-transparent">
+        <CardHeader>
+          <CardTitle>
+            <SkeletonCard/>
+          </CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   return (
     <Card className="border border-transparent">
       <CardHeader>
@@ -90,16 +189,33 @@ export function StockGraph({ symbol }: StockGraphProps) {
           </div>
           <div className="h-2" />
           <StockPriceChange
-            firstPrice={chartData[0]?.price || 0}
+            firstPrice={displayData[0]?.price || 0}
             secondPrice={hoveredPrice || stocks[symbol]?.price || 0}
           />
         </CardTitle>
+        <Tabs 
+          defaultValue="1H" 
+          value={timeframe}
+          className="w-fit pt-2" 
+          onValueChange={(value) => setTimeframe(value as Timeframe)}
+        >
+          <TabsList className="grid grid-cols-5 w-fit">
+            <TabsTrigger value="1H">1H</TabsTrigger>
+            <TabsTrigger value="1D">1D</TabsTrigger>
+            <TabsTrigger value="1W">1W</TabsTrigger>
+            <TabsTrigger value="1M">1M</TabsTrigger>
+            <TabsTrigger value="ALL">ALL</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[50px] w-full">
-          <LineChart data={chartData} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+          <LineChart data={displayData} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="timestamp" tickFormatter={(value) => new Date(value).toLocaleTimeString()} />
+            <XAxis 
+              dataKey="timestamp" 
+              tickFormatter={(value) => formatTimestamp(value, timeframe)}
+            />
             <YAxis 
               domain={['auto', 'auto']}
               tick={false}
@@ -110,9 +226,15 @@ export function StockGraph({ symbol }: StockGraphProps) {
               type="monotone"
               dot={false}
               dataKey="price"
-              stroke={getBorderColor(chartData)}
+              stroke={getBorderColor(displayData)}
             />
-            <ChartTooltip content={<ChartTooltipContent labelFormatter={(label) => new Date(label).toLocaleTimeString()} />} />
+            <ChartTooltip 
+              content={
+                <ChartTooltipContent 
+                  labelFormatter={(label) => formatTimestamp(label, timeframe)} 
+                />
+              } 
+            />
           </LineChart>
         </ChartContainer>
       </CardContent>

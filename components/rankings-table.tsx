@@ -12,7 +12,6 @@ import {
   import { supabase } from "@/lib/supabase";
   import { useEffect, useState } from "react";
 import { Avatar } from "./ui/avatar";
-import Link from "next/link";
 
   export default function RankingsTable() {
         const [profiles, setProfiles] = useState<any[]>([]);
