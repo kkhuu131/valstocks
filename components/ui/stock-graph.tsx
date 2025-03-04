@@ -180,41 +180,52 @@ export function StockGraph({ symbol }: StockGraphProps) {
 
   return (
     <Card className="border border-transparent">
-      <CardHeader>
-        <CardTitle className="flex flex-col items-start min-w-[200px] text-left">
-          <h1 className="text-4xl font-bold mb-2">{teamMappings.teamBySymbolMap[symbol as keyof typeof teamMappings.teamBySymbolMap]?.name}</h1>
-          <div className="flex items-center">
-            <p className="text-3xl">$</p>
-            <AnimatingNumber value={hoveredPrice || stocks[symbol]?.price || 0} />
-          </div>
-          <div className="h-2" />
-          <StockPriceChange
-            firstPrice={displayData[0]?.price || 0}
-            secondPrice={hoveredPrice || stocks[symbol]?.price || 0}
-          />
-        </CardTitle>
-        <Tabs 
-          defaultValue="1H" 
-          value={timeframe}
-          className="w-fit pt-2" 
-          onValueChange={(value) => setTimeframe(value as Timeframe)}
-        >
-          <TabsList className="grid grid-cols-5 w-fit">
-            <TabsTrigger value="1H">1H</TabsTrigger>
-            <TabsTrigger value="1D">1D</TabsTrigger>
-            <TabsTrigger value="1W">1W</TabsTrigger>
-            <TabsTrigger value="1M">1M</TabsTrigger>
-            <TabsTrigger value="ALL">ALL</TabsTrigger>
-          </TabsList>
-        </Tabs>
+      <CardHeader className="space-y-4">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-start">
+          <CardTitle className="flex flex-col items-start min-w-[200px] text-left">
+            <h1 className="text-2xl sm:text-4xl font-bold mb-2">{teamMappings.teamBySymbolMap[symbol as keyof typeof teamMappings.teamBySymbolMap]?.name}</h1>
+            <div className="flex items-center">
+              <p className="text-2xl sm:text-3xl">$</p>
+              <AnimatingNumber value={hoveredPrice || stocks[symbol]?.price || 0} />
+            </div>
+            <div className="h-2" />
+            <StockPriceChange
+              firstPrice={displayData[0]?.price || 0}
+              secondPrice={hoveredPrice || stocks[symbol]?.price || 0}
+            />
+          </CardTitle>
+
+          <Tabs 
+            defaultValue="1H" 
+            value={timeframe}
+            className="w-full sm:w-fit" 
+            onValueChange={(value) => setTimeframe(value as Timeframe)}
+          >
+            <TabsList className="grid w-full sm:w-fit grid-cols-5">
+              <TabsTrigger className="text-xs sm:text-sm" value="1H">1H</TabsTrigger>
+              <TabsTrigger className="text-xs sm:text-sm" value="1D">1D</TabsTrigger>
+              <TabsTrigger className="text-xs sm:text-sm" value="1W">1W</TabsTrigger>
+              <TabsTrigger className="text-xs sm:text-sm" value="1M">1M</TabsTrigger>
+              <TabsTrigger className="text-xs sm:text-sm" value="ALL">ALL</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </CardHeader>
+
       <CardContent>
-        <ChartContainer config={chartConfig} className="min-h-[50px] w-full">
-          <LineChart data={displayData} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+          <LineChart 
+            data={displayData} 
+            onMouseMove={handleMouseMove} 
+            onMouseLeave={handleMouseLeave}
+            margin={{ top: 5, right: 10, left: 10, bottom: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
               dataKey="timestamp" 
               tickFormatter={(value) => formatTimestamp(value, timeframe)}
+              tick={{ fontSize: 12 }}
+              interval="preserveStartEnd"
             />
             <YAxis 
               domain={['auto', 'auto']}

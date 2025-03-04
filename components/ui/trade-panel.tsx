@@ -141,12 +141,20 @@ export default function TradePanel({ symbol }: TradePanelProps) {
 
     return (
         <Card>
-            <Tabs defaultValue="buy">
-                <CardHeader className="flex justify-start">
-                    {user ? (<TabsList className="flex space-x-2">
-                        <TabsTrigger value="buy"><CardTitle>Buy {symbol}</CardTitle></TabsTrigger>
-                        <TabsTrigger value="sell"><CardTitle>Sell {symbol}</CardTitle></TabsTrigger>
-                    </TabsList>) : (<CardTitle>Buy {symbol}</CardTitle>)}
+            <Tabs defaultValue="buy" className="flex flex-col items-center">
+                <CardHeader className="w-full flex items-center justify-center">
+                    {user ? (
+                        <TabsList className="w-fit grid grid-cols-2 gap-2 px-5">
+                            <TabsTrigger value="buy">
+                                <CardTitle className="text-md sm:text-md">Buy {symbol}</CardTitle>
+                            </TabsTrigger>
+                            <TabsTrigger value="sell">
+                                <CardTitle className="text-md sm:text-md">Sell {symbol}</CardTitle>
+                            </TabsTrigger>
+                        </TabsList>
+                    ) : (
+                        <CardTitle>Buy {symbol}</CardTitle>
+                    )}
                 </CardHeader>
                 <TabsContent value="buy">
                         <CardContent>

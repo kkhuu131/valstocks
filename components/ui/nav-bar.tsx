@@ -16,12 +16,11 @@ export default function NavBar() {
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-14 items-center">
           <Link href="/" className="flex items-center" prefetch={false}>
-            {/* uparrow icon */}
             <TrendingUpIcon className="w-6 h-6 text-green mr-2"/>
-            <h1>ValStocks</h1>
+            <h1 className="hidden sm:block">ValStocks</h1>
             <span className="sr-only">ValStocks</span>
           </Link>
-          <nav className="hidden md:flex gap-4">
+          <nav className="flex gap-4">
             <Link
               href="/"
               className="font-medium flex items-center text-sm transition-colors hover:underline"

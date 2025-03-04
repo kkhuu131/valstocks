@@ -5,7 +5,7 @@ export default function Home() {
 
   return (
     <main className="pt-20 pb-20">
-      <section className="flex flex-col items-center py-2 w-full max-w-screen-lg mx-auto px-4">
+      <section className="flex flex-col items-center py-2 w-full max-w-screen-lg mx-auto px-12">
         <h1 className="text-4xl font-bold m-5">About ValStocks</h1>
         <p className="text-xl text-muted-foreground mt-5">ValStocks is a stock trading simulator for the popular FPS game, VALORANT. There is no real 
             money involved and is simply for fun. Each stock is based on a pro team&apos;s performance in the Champions League. The value of stocks also take into account general sentiment using Reddit, and supply and demand.

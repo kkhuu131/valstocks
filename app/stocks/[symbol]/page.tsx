@@ -18,13 +18,13 @@ export default function Stocks({ params }: StockPageProps) {
     const symbol = decodeURIComponent(params.symbol);
 
     return (
-        <main className="mt-20 mb-20">
+        <main className="mt-20 mb-20 px-4 sm:px-6">
             <section className="items-center justify-center py-2 w-full max-w-screen-lg mx-auto">
-                <div className="flex w-full">
-                    <div className="w-2/3">
+                <div className="flex flex-col lg:flex-row w-full gap-4">
+                    <div className="w-full lg:w-2/3">
                         <StockGraph symbol={symbol} />
                     </div>
-                    <div className="w-1/3 mt-auto">
+                    <div className="w-full lg:w-1/3">
                         <TradePanel symbol={symbol} />
                     </div>
                 </div>
