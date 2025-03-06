@@ -160,7 +160,7 @@ export default function StockDisplaySet() {
                                     {teamMappings.teamBySymbolMap[stock.symbol as keyof typeof teamMappings.teamBySymbolMap]?.name}
                                 </CardDescription>
                             </div>
-                            <div className="hidden md:block w-1/2 h-10 flex-shrink">
+                            <div className="hidden md:block w-2/5 h-8 flex-shrink">
                                 <Line
                                     data={getChartData(stock)}
                                     options={getChartOptions()}
