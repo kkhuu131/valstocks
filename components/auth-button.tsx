@@ -9,17 +9,48 @@ import { Session } from '@supabase/supabase-js';
 const AuthButton = () => {
     const [session, setSession] = useState<Session | null>(null);
 
+    const updateProfileImage = async (userId: string, avatarUrl: string) => {
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ picture: avatarUrl })
+                .eq('id', userId);
+
+            if (error) {
+                console.error('Error updating profile image:', error);
+            }
+        } catch (error) {
+            console.error('Error in updateProfileImage:', error);
+        }
+    };
+
     useEffect(() => {
         const getSession = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             setSession(session);
+
+            // Update profile image when session is first retrieved
+            if (session?.user) {
+                const avatarUrl = session.user.user_metadata?.avatar_url;
+                if (avatarUrl) {
+                    await updateProfileImage(session.user.id, avatarUrl);
+                }
+            }
         };
         getSession();
 
         const {
             data: { subscription }
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange(async (_event, session) => {
             setSession(session);
+
+            // Update profile image when auth state changes
+            if (session?.user) {
+                const avatarUrl = session.user.user_metadata?.avatar_url;
+                if (avatarUrl) {
+                    await updateProfileImage(session.user.id, avatarUrl);
+                }
+            }
         });
 
         return () => {
