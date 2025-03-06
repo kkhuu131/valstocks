@@ -17,12 +17,12 @@ export default function NavBar() {
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16 items-center">
           <Link href="/" className="flex items-center" prefetch={false}>
-            <TrendingUpIcon className="w-7 h-7 text-green mr-2"/>
+            <TrendingUpIcon className="hidden sm:block w-7 h-7 text-green mr-2"/>
             <h1 className="hidden sm:block text-lg">ValStocks</h1>
             <span className="sr-only">ValStocks</span>
           </Link>
 
-          <div className="flex-1 max-w-sm mx-6">
+          <div className="hidden sm:block flex-1 max-w-sm mx-6">
             <SearchBar />
           </div>
 
