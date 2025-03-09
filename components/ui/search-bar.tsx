@@ -13,16 +13,36 @@ interface SearchResult {
   value: string
   image?: string
 }
-
-
+interface Profiles {
+  username: string
+  picture: string
+}
 
 export function SearchBar() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [isOpen, setIsOpen] = useState(false)
+  const [profiles, setProfiles] = useState<Profiles[]>([]);
   const router = useRouter()
 
   const validSymbols = new Set(teams);
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username, picture');
+
+      if (error) {
+        console.error('Error fetching profiles:', error);
+        return;
+      }
+
+      setProfiles(data || []);
+    };
+
+    fetchProfiles();
+  }, []);
 
   useEffect(() => {
     const searchData = async () => {
@@ -32,42 +52,39 @@ export function SearchBar() {
       }
 
       // Search users
-      const { data: users } = await supabase
-        .from('profiles')
-        .select('username, picture')
-        .ilike('username', `%${query}%`)
-        .limit(5)
+      const users = profiles
+      .filter(user => user.username.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, 5)
+      .map(user => ({
+        type: 'user' as const,
+        label: user.username,
+        value: `/profiles/${user.username}`,
+        image: user.picture,
+      }));
 
       // Search stocks
       const stocks = Object.entries(teamMappings.teamBySymbolMap)
-        .filter(([symbol, team]) => 
+        .filter(([symbol, team]) =>
           validSymbols.has(symbol) && // Ensure the symbol exists in teams.json
-          (symbol.toLowerCase().includes(query.toLowerCase()) || 
-          team.name.toLowerCase().includes(query.toLowerCase()))
+          (symbol.toLowerCase().includes(query.toLowerCase()) ||
+            team.name.toLowerCase().includes(query.toLowerCase()))
         )
-        .slice(0, 5);
-
-      const searchResults: SearchResult[] = [
-        ...(users?.map(user => ({
-          type: 'user' as const,
-          label: user.username,
-          value: `/profiles/${user.username}`,
-          image: user.picture
-        })) || []),
-        ...stocks.map(([symbol, team]) => ({
+        .slice(0, 5)
+        .map(([symbol, team]) => ({
           type: 'stock' as const,
           label: `${symbol} - ${team.name}`,
           value: `/stocks/${symbol}`,
-          image: team.img
-        }))
-      ]
+          image: team.img,
+        }));
+
+      const searchResults: SearchResult[] = [...users, ...stocks];
 
       setResults(searchResults)
     }
 
     const timeoutId = setTimeout(searchData, 300)
     return () => clearTimeout(timeoutId)
-  }, [query])
+  }, [query, profiles])
 
   return (
     <div className="relative w-full max-w-sm mx-auto">
