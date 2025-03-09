@@ -29,6 +29,7 @@ import { SkeletonCard } from "@/components/ui/skeleton-card";
                         .select("*")
                         .order("networth", { ascending: false })
                         .limit(100);
+
                 
                     if (error) {
                         console.error("Error fetching profiles:", error.message);

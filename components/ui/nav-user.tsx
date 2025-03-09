@@ -16,11 +16,24 @@ interface iAppProps {
     name: string;
     userImage: string | undefined;
   }
+  
   export function NavUser({ email, name, userImage }: iAppProps) {
+    
+    // Sign out function
     async function signOut() {
-      const { error } = await supabase.auth.signOut()
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error('Error during sign out:', error);
+        } else {
+          // Manually reset session to null after successful sign-out
+          window.location.href = '/'; // Redirect to homepage or any other page after logout
+        }
+      } catch (error) {
+        console.error('Error during sign-out:', error);
+      }
     }
-
+  
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -35,23 +48,19 @@ interface iAppProps {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">{name}</p>
-              <p className="text-xs leading-none text-muted-foreground">
-                {email}
-              </p>
+              <p className="text-xs leading-none text-muted-foreground">{email}</p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            {/* <DropdownMenuItem>test</DropdownMenuItem>
-            <DropdownMenuItem>test</DropdownMenuItem>
-            <DropdownMenuItem>test</DropdownMenuItem>
-            <DropdownMenuItem>test</DropdownMenuItem> */}
+            {/* You can add additional menu items here */}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-            <DropdownMenuItem asChild onClick={signOut}>
+          <DropdownMenuItem asChild onClick={signOut}>
             <p>Log out</p>
-            </DropdownMenuItem>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
   }
+  
