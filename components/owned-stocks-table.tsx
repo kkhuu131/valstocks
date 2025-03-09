@@ -29,7 +29,7 @@ import StockPriceChange from "./ui/stock-price-change";
                 <TableHead className="text-right">Owned</TableHead>
                 <TableHead className="text-right">Price</TableHead>
                 {/* <TableHead className="text-right">Total Value</TableHead> */}
-                <TableHead className="text-right">Last 24 Hours</TableHead>
+                <TableHead className="text-right">Last Hour</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>

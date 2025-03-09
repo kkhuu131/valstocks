@@ -1,6 +1,5 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import React, { useEffect, useState } from "react";
 import {
@@ -22,6 +21,7 @@ import AnimatingNumber from "./ui/animating-number";
 import StockPriceChange from "./ui/stock-price-change";
 import teamMappings from "@/data/teamMappings.json";
 import { supabase } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
 
 
 const chartConfig = {
@@ -41,35 +41,40 @@ interface NetworthGraphProps {
 }
 
 export function NetworthGraph({ networth, userId }: NetworthGraphProps) {
-    const [chartData, setChartData] = useState<{ timestamp: string; networth: number }[]>([]);
     const [hoveredNetWorth, setHoveredNetWorth] = useState(0);
 
-    useEffect(() => {
-        if (!userId) return;
+    const fetchNetWorthHistory = async () => {
+        if (!userId) return [];
 
-        const fetchNetWorthHistory = async () => {
-            const { data, error } = await supabase
-                .from("networth_history")
-                .select("timestamp, networth")
-                .eq("user_id", userId)
-                .eq("interval_type", "hourly") // minute (last hour), hourly (last day), daily (last week)
-                .order("timestamp", { ascending: true });
+        console.time("NetworthQueryTime");
 
-            if (error) {
-                console.error("Error fetching net worth history:", error);
-                return;
-            }
+        const { data, error } = await supabase
+            .from("networth_history")
+            .select("timestamp, networth")
+            .eq("user_id", userId)
+            .eq("interval_type", "hourly") // minute (last hour), hourly (last day), daily (last week)
+            .order("timestamp", { ascending: true });
 
-            console.log(data);
+        console.timeEnd("NetworthQueryTime");
 
-            setChartData(data);
-            if (data.length > 0) {
-                setHoveredNetWorth(networth); // Set latest net worth
-            }
-        };
+        if (error) {
+            console.error("Error fetching net worth history:", error);
+            throw new Error(error.message);
+        }
 
-        fetchNetWorthHistory();
-    }, []);
+        if (data.length > 0) {
+            setHoveredNetWorth(networth);
+        }
+
+        return data;
+    };
+
+    const { data: chartData = [], isLoading, error } = useQuery({
+        queryKey: ["networthHistory", userId],
+        queryFn: fetchNetWorthHistory,
+        staleTime: 60000,
+        refetchOnWindowFocus: false,
+    });
 
     useEffect(() => {
         setHoveredNetWorth(networth);
