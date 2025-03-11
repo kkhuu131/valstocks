@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { supabase } from "@/lib/supabase";
+import createClient from "@/utils/supabase/client";
 
 interface iAppProps {
     email: string;
@@ -22,7 +22,9 @@ interface iAppProps {
     // Sign out function
     async function signOut() {
       try {
+        const supabase = createClient();
         const { error } = await supabase.auth.signOut();
+
         if (error) {
           console.error('Error during sign out:', error);
         } else {

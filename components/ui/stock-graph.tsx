@@ -1,6 +1,5 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import React, { useEffect, useState } from "react";
 import {
@@ -17,13 +16,13 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useStocksContext } from "@/context/StocksContext";
+import { useStocks } from "@/hooks/useStocks";
 import AnimatingNumber from "./animating-number";
 import StockPriceChange from "./stock-price-change";
 import teamMappings from "@/data/teamMappings.json";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { fetchStockBySymbol } from "@/lib/supabaseQueries";
 import { SkeletonCard } from "./skeleton-card";
+import { useStockHistory } from "@/hooks/useStockHistory";
 
 const chartConfig = {
   price: {
@@ -36,18 +35,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-interface StockGraphProps {
-  symbol: string
-}
 
 type Timeframe = '1H' | '1D' | '1W' | '1M' | 'ALL';
-
-interface HistoricalDataCache {
-  minute: any[];
-  fiveMinute: any[];
-  hourly: any[];
-  daily: any[];
-}
 
 const formatTimestamp = (timestamp: string, timeframe: Timeframe) => {
   const date = new Date(timestamp);
@@ -75,61 +64,28 @@ const formatTimestamp = (timestamp: string, timeframe: Timeframe) => {
   }
 };
 
-export function StockGraph({ symbol }: StockGraphProps) {
-  const { stocks } = useStocksContext();
+export function StockGraph({ symbol }: { symbol: string }) {
+  const { stocksObject: stocks, isLoading: stocksLoading, isError: stocksError } = useStocks();
   const [timeframe, setTimeframe] = useState<Timeframe>('1H');
-  const [historicalDataCache, setHistoricalDataCache] = useState<HistoricalDataCache>({
-    minute: [],
-    fiveMinute: [],
-    hourly: [],
-    daily: []
-  });
+  const { stockHistory, isLoading: historyLoading, isError: historyError } = useStockHistory(symbol);
   const [hoveredPrice, setHoveredPrice] = useState(stocks[symbol]?.price || 0);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchAllHistoricalData = async () => {
-      setIsLoading(true);
-      try {
-        const [minuteData, fiveMinuteData, hourlyData, dailyData] = await Promise.all([
-          fetchStockBySymbol(symbol, 'minute'),
-          fetchStockBySymbol(symbol, '5-minute'),
-          fetchStockBySymbol(symbol, 'hourly'),
-          fetchStockBySymbol(symbol, 'daily')
-        ]);
-
-        setHistoricalDataCache({
-          minute: minuteData || [],
-          fiveMinute: fiveMinuteData || [],
-          hourly: hourlyData || [],
-          daily: dailyData || []
-        });
-      } catch (error) {
-        console.error('Error fetching historical data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAllHistoricalData();
-  }, [symbol]);
 
   // Get the appropriate data based on timeframe
   const getDisplayData = () => {
     if (timeframe === '1H') {
-      return stocks[symbol]?.data || [];
+      return stockHistory.minute;
     }
 
     switch (timeframe) {
       case '1D':
-        return historicalDataCache.fiveMinute;
+        return stockHistory.fiveMinute;
       case '1W':
-        return historicalDataCache.hourly;
+        return stockHistory.hourly;
       case '1M':
       case 'ALL':
-        return historicalDataCache.daily;
+        return stockHistory.daily;
       default:
-        return stocks[symbol]?.data || [];
+        return stockHistory.minute;
     }
   };
 
@@ -166,7 +122,7 @@ export function StockGraph({ symbol }: StockGraphProps) {
     }
   };
 
-  if (isLoading) {
+  if (stocksLoading || historyLoading) {
     return (
       <Card className="border border-transparent">
         <CardHeader>
@@ -190,7 +146,7 @@ export function StockGraph({ symbol }: StockGraphProps) {
             </div>
             <div className="h-2" />
             <StockPriceChange
-              firstPrice={displayData[0]?.price || 0}
+              firstPrice={displayData?.[0]?.price || 0}
               secondPrice={hoveredPrice || stocks[symbol]?.price || 0}
             />
           </CardTitle>

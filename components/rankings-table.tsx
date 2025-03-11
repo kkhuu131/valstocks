@@ -9,7 +9,7 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table";
-  import { supabase } from "@/lib/supabase";
+  import createClient from "@/utils/supabase/client";
   import { useEffect, useState } from "react";
 import { Avatar } from "./ui/avatar";
 import { ChevronUp, ChevronDown } from "lucide-react";
@@ -24,6 +24,8 @@ import { SkeletonCard } from "@/components/ui/skeleton-card";
             const fetchProfiles = async () => {
                 setIsLoading(true);
                 try {
+                    const supabase = createClient();
+
                     const { data, error } = await supabase
                         .from("profiles")
                         .select("*")

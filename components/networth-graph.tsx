@@ -16,12 +16,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useStocksContext } from "@/context/StocksContext";
 import AnimatingNumber from "./ui/animating-number";
 import StockPriceChange from "./ui/stock-price-change";
 import teamMappings from "@/data/teamMappings.json";
-import { supabase } from "@/lib/supabase";
-import { useQuery } from "@tanstack/react-query";
+import { useNetworthHistory } from "@/hooks/useNetworthHistory";
 
 
 const chartConfig = {
@@ -42,39 +40,9 @@ interface NetworthGraphProps {
 
 export function NetworthGraph({ networth, userId }: NetworthGraphProps) {
     const [hoveredNetWorth, setHoveredNetWorth] = useState(0);
+    const { networthHistory, isLoading, isError } = useNetworthHistory(userId);
 
-    const fetchNetWorthHistory = async () => {
-        if (!userId) return [];
-
-        console.time("NetworthQueryTime");
-
-        const { data, error } = await supabase
-            .from("networth_history")
-            .select("timestamp, networth")
-            .eq("user_id", userId)
-            .eq("interval_type", "hourly") // minute (last hour), hourly (last day), daily (last week)
-            .order("timestamp", { ascending: true });
-
-        console.timeEnd("NetworthQueryTime");
-
-        if (error) {
-            console.error("Error fetching net worth history:", error);
-            throw new Error(error.message);
-        }
-
-        if (data.length > 0) {
-            setHoveredNetWorth(networth);
-        }
-
-        return data;
-    };
-
-    const { data: chartData = [], isLoading, error } = useQuery({
-        queryKey: ["networthHistory", userId],
-        queryFn: fetchNetWorthHistory,
-        staleTime: 60000,
-        refetchOnWindowFocus: false,
-    });
+    const chartData = networthHistory?.minute ?? [];
 
     useEffect(() => {
         setHoveredNetWorth(networth);
@@ -94,7 +62,7 @@ export function NetworthGraph({ networth, userId }: NetworthGraphProps) {
 
     const getBorderColor = () => {
         if (chartData.length === 0) return "gray";
-        const firstValue = chartData[0].networth;
+        const firstValue = chartData[0].networth || 0;
         const lastValue = hoveredNetWorth;
 
         return lastValue > firstValue ? "#5ac639" : lastValue < firstValue ? "#eb5c28" : "gray";

@@ -1,36 +1,64 @@
-// useStocks.ts
 import { useState, useEffect } from 'react';
-import { fetchStocks } from '../lib/supabaseQueries';
-
-type Stock = {
-    symbol: string;
-    price: number;
-    locked: boolean;
-};
+import { getAllCurrentStock } from '../queries/get-all-current-stock';
+import createClient from '../utils/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 export const useStocks = () => {
-    const [stocks, setStocks] = useState<Stock[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [stocksObject, setStocksObject] = useState<{ [key: string]: any }>({});
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['currentStocks'],
+        queryFn: async () => {
+            const client = createClient();
+            const { data, error } = await getAllCurrentStock(client);
+            if (error) {
+                throw error;
+            }
+
+            return data;
+        },
+    });
 
     useEffect(() => {
-        const getStocks = async () => {
-            setLoading(true);
-            try {
-                const data = await fetchStocks();
-                if (error) {
-                    throw error;
-                }
-                setStocks(data);
-            } catch (err: any) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (data) {
+            const stocks = data.reduce((acc: { [key: string]: any }, stock: any) => {
+                acc[stock.symbol] = stock;
+                return acc;
+            }, {});
+            setStocksObject(stocks);
+        }
+    }, [data]);
 
-        getStocks();
+    useEffect(() => {
+        const client = createClient();
+        const subscription = client
+            .channel('current-stock-price-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'current_stock_prices',
+                },
+                (payload) => {
+                    const updatedStock = payload.new;
+                    setStocksObject((prevStocksObject) => ({
+                        ...prevStocksObject,
+                        [updatedStock.symbol]: updatedStock,
+                    }));
+                }
+            )
+            .subscribe();
+
+        return () => {
+            subscription.unsubscribe();
+        };
     }, []);
 
-    return { stocks, loading, error };
+    return {
+        stocksObject,  // Now we return the stocksObject
+        isLoading,
+        isError: !!error,
+    };
 };
+

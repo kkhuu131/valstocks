@@ -6,6 +6,9 @@ import OwnedStocksTable from "./owned-stocks-table";
 import { NetworthGraph } from "./networth-graph";
 
   export default function ProfileDisplay({profile}: {profile: any}) {
+    if (!profile) {
+        return <div></div>;
+    }
 
     return (
         <div className="mx-auto w-full max-w-4xl">

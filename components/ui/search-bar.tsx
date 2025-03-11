@@ -3,19 +3,20 @@
 import { useState, useEffect } from 'react'
 import { Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import createClient from '@/utils/supabase/client'
 import teamMappings from "@/data/teamMappings.json"
 import teams from "@/data/teams.json"
+import { getAllProfiles } from '@/queries/get-all-profiles'
 
 interface SearchResult {
   type: 'user' | 'stock'
-  label: string
-  value: string
-  image?: string
+  label: string | null
+  value: string | null
+  image?: string | null
 }
 interface Profiles {
-  username: string
-  picture: string
+  username: string | null
+  picture: string | null
 }
 
 export function SearchBar() {
@@ -29,9 +30,8 @@ export function SearchBar() {
 
   useEffect(() => {
     const fetchProfiles = async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('username, picture');
+      const client = createClient();
+      const { data, error } = await getAllProfiles(client);
 
       if (error) {
         console.error('Error fetching profiles:', error);
@@ -53,7 +53,7 @@ export function SearchBar() {
 
       // Search users
       const users = profiles
-      .filter(user => user.username.toLowerCase().includes(query.toLowerCase()))
+      .filter(user => user.username?.toLowerCase().includes(query.toLowerCase()))
       .slice(0, 5)
       .map(user => ({
         type: 'user' as const,
@@ -113,14 +113,14 @@ export function SearchBar() {
               key={index}
               className="flex items-center gap-2 p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
               onClick={() => {
-                router.push(result.value)
+                router.push(result.value || '')
                 setIsOpen(false)
                 setQuery('')
               }}
             >
               <img
                 src={result.image || "https://owcdn.net/img/64168fe1322dd.png"}
-                alt={result.label}
+                alt={result.label || "User"}
                 className="w-6 h-6 rounded-full"
               />
               <div>

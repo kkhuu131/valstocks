@@ -2,13 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '../lib/supabase';
 import { NavUser } from '@/components/ui/nav-user';
 import { Session } from '@supabase/supabase-js';
+import createClient from '@/utils/supabase/client'
 
 const AuthButton = () => {
+    const supabase = createClient();
+
     const [session, setSession] = useState<Session | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const updateProfileImage = async (userId: string, avatarUrl: string) => {
@@ -28,12 +30,10 @@ const AuthButton = () => {
         }
     };
 
-    // Ensure session is set when the component mounts
     useEffect(() => {
         const getSession = async () => {
             setLoading(true);
             try {
-                // Fetch session after component mounts
                 const { data: { session } } = await supabase.auth.getSession();
                 setSession(session);
 
@@ -50,21 +50,20 @@ const AuthButton = () => {
                 setLoading(false);
             }
         };
+
         getSession();
 
-        // Set up listener for session changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
             setSession(session);
 
             if (session?.user) {
                 const avatarUrl = session.user.user_metadata?.avatar_url;
                 if (avatarUrl) {
-                    await updateProfileImage(session.user.id, avatarUrl);
+                    updateProfileImage(session.user.id, avatarUrl);
                 }
             }
         });
 
-        // Cleanup subscription on component unmount
         return () => {
             subscription.unsubscribe();
         };
@@ -84,6 +83,14 @@ const AuthButton = () => {
         }
     };
 
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (error) {
+        return <p className="text-red-500">{error}</p>;
+    }
+
     const user = session?.user;
     const userName = user?.user_metadata?.full_name || 'User';
     const userEmail = user?.email || '';
@@ -91,9 +98,7 @@ const AuthButton = () => {
 
     return (
         <div className="flex items-center justify-center">
-            {loading ? (
-                <p>Loading...</p>
-            ) : user ? (
+            {user ? (
                 <NavUser email={userEmail} name={userName} userImage={userImage} />
             ) : (
                 <Button onClick={handleAuth}>
@@ -104,7 +109,6 @@ const AuthButton = () => {
                         className="w-5"></img>
                 </Button>
             )}
-            {error && <p className="text-red-500">{error}</p>}
         </div>
     );
 };

@@ -7,8 +7,6 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card";
-import { useStocksContext } from "@/context/StocksContext";
-import { useUser } from "@/context/UserContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     AlertDialog,
@@ -21,39 +19,32 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog";
-  import { supabase } from "@/lib/supabase";
 import { SkeletonCard } from './skeleton-card';
 import { toast } from "sonner";
-  
+import { useQuery } from "@tanstack/react-query";
+import createClient from '@/utils/supabase/client';
+import { getProfileById } from '@/queries/get-profile-by-id';
+import { useStocks } from '@/hooks/useStocks';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 interface TradePanelProps {
     symbol: string
 }
 
 export default function TradePanel({ symbol }: TradePanelProps) {
-    const { user, loading } = useUser();
+    const supabase = createClient();
 
-    if(loading) {
+    const { profile, isLoading, isError } = useUserProfile();
+    const { stocksObject: stocks, isLoading: stocksLoading, isError: stocksError } = useStocks();
+
+    const [shares, setShares] = useState<number>(0);
+
+    if(isLoading || stocksLoading) {
         return <SkeletonCard/>;
     }
 
-    const { stocks } = useStocksContext();
-    const [shares, setShares] = useState<number>(0);
-
     const pricePerShare = stocks[symbol]?.price || 0;
     const estimatedValue = shares * pricePerShare;
-
-    // const getURL = () => {
-    //     let url =
-    //         process.env.NEXT_PUBLIC_SITE_URL ??
-    //         process.env.NEXT_PUBLIC_VERCEL_URL ??
-    //         'http://localhost:3000';
-    //     // Make sure to include `https://` when not localhost.
-    //     url = url.includes('http') ? url : `https://${url}`;
-    //     // Make sure to include a trailing `/`.
-    //     url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
-    //     return url;
-    // };
 
     const handleAuth = async () => {
         await supabase.auth.signInWithOAuth({
@@ -62,12 +53,12 @@ export default function TradePanel({ symbol }: TradePanelProps) {
     };
 
     const handleBuyConfirmation = async () => {
-        if (!user) {
+        if (!profile) {
             console.log("Not logged in!");
             return;
         }
 
-        if (shares * pricePerShare > (user?.balance || 0)) {
+        if (shares * pricePerShare > (profile?.balance || 0)) {
             console.log("Insufficient balance!");
             return;
         }
@@ -87,7 +78,7 @@ export default function TradePanel({ symbol }: TradePanelProps) {
     };
 
     const handleSellConfirmation = async () => {
-        if (!user) {
+        if (!profile) {
             toast("Not logged in!");
             return;
         }
@@ -97,7 +88,7 @@ export default function TradePanel({ symbol }: TradePanelProps) {
             return;
         }
 
-        if (shares > (user?.stocks[symbol] || 0)) {
+        if (shares > ((profile?.stocks as Record<string, number> | undefined)?.[symbol] || 0)) {
             toast("Insufficient shares!");
             return;
         }
@@ -120,11 +111,11 @@ export default function TradePanel({ symbol }: TradePanelProps) {
         const value = parseInt(e.target.value);
         if (isNaN(value) || value < 0) {
             setShares(0);
-        } else if (value * pricePerShare <= (user?.balance || 0)) {
+        } else if (value * pricePerShare <= (profile?.balance || 0)) {
             setShares(value);
         }
         else {
-            setShares(Math.floor((user?.balance || 0) / pricePerShare));
+            setShares(Math.floor((profile?.balance || 0) / pricePerShare));
         }
     };
 
@@ -132,10 +123,10 @@ export default function TradePanel({ symbol }: TradePanelProps) {
         const value = parseInt(e.target.value);
         if (isNaN(value) || value < 0) {
             setShares(0);
-        } else if (value <= (user?.stocks[symbol] || 0)) {
+        } else if (value <= ((profile?.stocks as Record<string, number> | undefined)?.[symbol] || 0)) {
             setShares(value);
         } else {
-            setShares(user?.stocks[symbol] || 0);
+            setShares((profile?.stocks as Record<string, number> | undefined)?.[symbol] || 0);
         }
     };
 
@@ -143,7 +134,7 @@ export default function TradePanel({ symbol }: TradePanelProps) {
         <Card>
             <Tabs defaultValue="buy" className="flex flex-col items-center">
                 <CardHeader className="w-full flex items-center justify-center">
-                    {user ? (
+                    {profile ? (
                         <TabsList className="w-fit grid grid-cols-2 gap-2 px-5">
                             <TabsTrigger value="buy">
                                 <CardTitle className="text-md sm:text-md">Buy {symbol}</CardTitle>
@@ -190,12 +181,12 @@ export default function TradePanel({ symbol }: TradePanelProps) {
                                         className="p-2 border border-gray-300 rounded-md"
                                     />
                                 </div>
-                                {user && <div className="flex flex-col gap-2">
+                                {profile && <div className="flex flex-col gap-2">
                                     <label htmlFor="balance">Balance</label>
                                     <input
                                         type="text"
                                         id="balance"
-                                        value={`$${user?.balance.toFixed(2)}`}
+                                        value={`$${(profile?.balance || 0).toFixed(2)}`}
                                         disabled
                                         className="p-2 border border-gray-300 rounded-md"
                                     />
@@ -203,7 +194,7 @@ export default function TradePanel({ symbol }: TradePanelProps) {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            {user ? (
+                            {profile ? (
                                 stocks[symbol]?.locked ? (
                                     <button
                                         disabled
@@ -282,7 +273,7 @@ export default function TradePanel({ symbol }: TradePanelProps) {
                                     <input
                                         type="text"
                                         id="balance"
-                                        value={`${user?.stocks[symbol] || 0}`}
+                                        value={`${(profile?.stocks as Record<string, number> | undefined)?.[symbol] || 0}`}
                                         disabled
                                         className="p-2 border border-gray-300 rounded-md"
                                     />

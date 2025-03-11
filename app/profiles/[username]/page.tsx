@@ -2,7 +2,8 @@
 
 import ProfileDisplay from "@/components/profile-display";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import createClient from "@/utils/supabase/client";
+import { getProfileByUsername } from "@/queries/get-profile-by-username";
 
 interface ProfilePageProps {
     params: {
@@ -16,14 +17,12 @@ export default function Profile({ params }: ProfilePageProps) {
 
     useEffect(() => {
         const fetchProfile = async () => {
-            const { data, error } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("username", username)
-                .single();
+            const supabase = createClient();
+
+            const { data, error } = await getProfileByUsername(supabase, username);
         
             if (error) {
-                console.error("Error fetching profile:", error.message);
+                console.error("Error fetching profile:", error);
                 return;
             }
 
@@ -32,27 +31,7 @@ export default function Profile({ params }: ProfilePageProps) {
         };
 
         fetchProfile();
-
-        const profileSubscription = supabase
-            .channel("profile-updates")
-            .on("postgres_changes", 
-            {
-                event: "UPDATE",
-                schema: "public",
-                table: "profiles",
-                filter: `username=eq.${username}`
-            },
-            (payload) => {
-                setProfile(payload.new);
-            }
-            )
-            .subscribe();
-
-
-        return () => {
-            supabase.removeChannel(profileSubscription);
-        };
-    }, [username]);
+    }, []);
 
     return (
         <main className="mt-20 mb-20">
