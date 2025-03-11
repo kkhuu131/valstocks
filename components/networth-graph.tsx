@@ -86,7 +86,6 @@ export function NetworthGraph({ networth, userId }: NetworthGraphProps) {
             </CardHeader>
             <CardContent>
             <ChartContainer config={chartConfig}>
-                <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis
@@ -107,7 +106,6 @@ export function NetworthGraph({ networth, userId }: NetworthGraphProps) {
                         />
                         <ChartTooltip content={<ChartTooltipContent labelFormatter={(label) => new Date(label).toLocaleTimeString()} />} />
                     </LineChart>
-                </ResponsiveContainer>
             </ChartContainer>
             </CardContent>
         </Card>

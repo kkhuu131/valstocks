@@ -26,7 +26,6 @@ export default function Profile({ params }: ProfilePageProps) {
                 return;
             }
 
-            console.log(data);
             setProfile(data);
         };
 
