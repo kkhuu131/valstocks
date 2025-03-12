@@ -1,5 +1,3 @@
-import { Stock } from "../../context/StocksContext";
-
 const StockPriceChange = ({ firstPrice, secondPrice }: { firstPrice: number, secondPrice: number }) => {
     // Calculate the price change (recent - latest)
     const priceChange = (firstPrice - secondPrice);
