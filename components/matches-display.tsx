@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { supabase } from "@/lib/supabase";
+import createClient from "@/utils/supabase/client";
 import {
     Table,
     TableBody,
@@ -18,6 +18,7 @@ import {
     
     useEffect(() => {
         const fetchMatches = async () => {
+            const supabase = createClient();
             const { data, error } = await supabase
                 .from("matches")
                 .select("*")
