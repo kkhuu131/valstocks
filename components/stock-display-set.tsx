@@ -54,21 +54,6 @@ export default function StockDisplaySet() {
         </div>;
     }
 
-    const toggleFavorite = (symbol: string) => {
-        const favorites = JSON.parse(localStorage.getItem('favoriteStocks') || '[]');
-        if (favorites.includes(symbol)) {
-            // Remove from favorites
-            console.log("unfavorite");
-            const updatedFavorites = favorites.filter((fav: string) => fav !== symbol);
-            localStorage.setItem('favoriteStocks', JSON.stringify(updatedFavorites));
-        } else {
-            console.log("fav");
-            // Add to favorites
-            favorites.push(symbol);
-            localStorage.setItem('favoriteStocks', JSON.stringify(favorites));
-        }
-    };
-
     return (
         <div className="flex flex-col gap-6">
             {Object.values(stocks)

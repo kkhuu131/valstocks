@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {NavUser} from "@/components/ui/nav-user";
 import AuthButton from "../auth-button";
 import { TrendingUpIcon } from "lucide-react";
-import { SearchBar } from "@/components/ui/search-bar";
+import { SearchBar } from "@/components/search-bar";
 
 export default function NavBar() {
   return (

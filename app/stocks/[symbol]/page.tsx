@@ -6,7 +6,7 @@ import NavBar from "@/components/ui/nav-bar";
 import { StockGraph } from "@/components/ui/stock-graph";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import TradePanel from "@/components/ui/trade-panel";
+import TradePanel from "@/components/trade-panel";
 
 interface StockPageProps {
     params: {

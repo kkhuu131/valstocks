@@ -19,7 +19,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog";
-import { SkeletonCard } from './skeleton-card';
+import { SkeletonCard } from './ui/skeleton-card';
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import createClient from '@/utils/supabase/client';
